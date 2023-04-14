@@ -1,5 +1,6 @@
 // NODE FACTORY FUNCTION
-function Node(position) {
+function Node(position = null, parent = null) {
+  if (position === null) return;
   const input = position;
   const regex = /^([a-h])([1-8])$/;
   const match = input.match(regex);
@@ -8,13 +9,16 @@ function Node(position) {
     x = match[1];
     y = Number(match[2]);
   } else {
-    throw new Error("Position is out of bounds");
+    return null;
   }
 
   return {
     currentPosition: function () {
-      return x + y;
+      return String(x + y);
     },
+
+    parent: parent,
+
     move1: function () {
       const asciiCode = x.charCodeAt(0);
       const newAsciiCode = asciiCode + 2;
@@ -24,7 +28,7 @@ function Node(position) {
       if (x1 < "a" || x1 > "h" || y1 < 1 || y1 > 8) {
         return null;
       }
-      return x1 + y1;
+      return String(x1 + y1);
     },
     move2: function () {
       const asciiCode = x.charCodeAt(0);
@@ -35,7 +39,7 @@ function Node(position) {
       if (x2 < "a" || x2 > "h" || y2 < 1 || y2 > 8) {
         return null;
       }
-      return x2 + y2;
+      return String(x2 + y2);
     },
     move3: function () {
       const asciiCode = x.charCodeAt(0);
@@ -46,7 +50,7 @@ function Node(position) {
       if (x3 < "a" || x3 > "h" || y3 < 1 || y3 > 8) {
         return null;
       }
-      return x3 + y3;
+      return String(x3 + y3);
     },
     move4: function () {
       const asciiCode = x.charCodeAt(0);
@@ -57,7 +61,7 @@ function Node(position) {
       if (x4 < "a" || x4 > "h" || y4 < 1 || y4 > 8) {
         return null;
       }
-      return x4 + y4;
+      return String(x4 + y4);
     },
     move5: function () {
       const asciiCode = x.charCodeAt(0);
@@ -68,7 +72,7 @@ function Node(position) {
       if (x5 < "a" || x5 > "h" || y5 < 1 || y5 > 8) {
         return null;
       }
-      return x5 + y5;
+      return String(x5 + y5);
     },
     move6: function () {
       const asciiCode = x.charCodeAt(0);
@@ -79,7 +83,7 @@ function Node(position) {
       if (x6 < "a" || x6 > "h" || y6 < 1 || y6 > 8) {
         return null;
       }
-      return x6 + y6;
+      return String(x6 + y6);
     },
     move7: function () {
       const asciiCode = x.charCodeAt(0);
@@ -90,7 +94,7 @@ function Node(position) {
       if (x7 < "a" || x7 > "h" || y7 < 1 || y7 > 8) {
         return null;
       }
-      return x7 + y7;
+      return String(x7 + y7);
     },
     move8: function () {
       const asciiCode = x.charCodeAt(0);
@@ -101,18 +105,82 @@ function Node(position) {
       if (x8 < "a" || x8 > "h" || y8 < 1 || y8 > 8) {
         return null;
       }
-      return x8 + y8;
+      return String(x8 + y8);
+    },
+
+    // Method for creating new nodes
+    newNodes: function () {
+      const currentNodeNames = [];
+      const newNodes = [];
+
+      // Fill array currentNodeNames with all possible moves
+      for (let i = 0; i < 8; i++) {
+        const methodName = `move${i + 1}`;
+        const method = this[methodName];
+        const newNode = method();
+        if (newNode !== null) currentNodeNames.push(newNode);
+      }
+      console.log(currentNodeNames);
+
+      // Create objects based on new nodes and store their references in newNodes array
+      if (currentNodeNames.length !== 0) {
+        for (let i = 0; i < currentNodeNames.length; i++) {
+          const childPosition = currentNodeNames[i];
+          const childNode = Node(childPosition, this);
+          if (childNode !== null) {
+            childNode.parent = this; // Child points back to parent
+          }
+          newNodes.push(childNode);
+        }
+        console.log(`Here it is: ${newNodes}`);
+        return newNodes;
+      } else return;
     },
   };
 }
 
-const knight = Node("d4");
-console.log(knight.currentPosition());
-console.log(knight.move1());
-console.log(knight.move2());
-console.log(knight.move3());
-console.log(knight.move4());
-console.log(knight.move5());
-console.log(knight.move6());
-console.log(knight.move7());
-console.log(knight.move8());
+function KnightMoves(startPosition, endPosition) {
+  // Initialization of some key components
+  const chessBoard = [];
+
+  // Create array of chess positions
+  for (let i = 0; i < 8; i++) {
+    const asciiCode = i + 97;
+    const positionXAxis = String.fromCharCode(asciiCode);
+    for (let j = 0; j < 8; j++) {
+      const positionYAxis = j + 1;
+      const boardPosition = positionXAxis + positionYAxis;
+      chessBoard.push(boardPosition);
+    }
+  }
+
+  // GRAPH FACTORY FUNCTION (BREADTH FIRST APPROACH FOR CREATING THE TREE)
+  function Graph() {
+    const root = Node(startPosition);
+    let endPositionObject;
+    const queue = [];
+    queue.push(root);
+
+    while (queue.length > 0) {
+      console.log("this works");
+      const currentNode = queue.shift();
+      //   const currentNodeObject = Node(currentNode);
+      if (currentNode.currentPosition() === endPosition) {
+        console.log("works");
+        endPositionObject = currentNode;
+        return endPositionObject;
+      }
+
+      const newNodes = currentNode.newNodes(); // returns array of child node objects
+      queue.push(...newNodes);
+    }
+  }
+
+  const endPositionObject = Graph();
+  console.log(endPositionObject);
+  return endPositionObject;
+}
+
+const endPosition = KnightMoves("h1", "a8");
+console.log(endPosition.currentPosition());
+console.log(endPosition.parent.currentPosition());
