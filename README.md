@@ -14,6 +14,8 @@ This challenge is a final project of me putting into practice what I have learne
    - Binary search trees
    - Graphs
 
+FYI: An image of the chessboard with coordinates is included in this directory.
+
 In this project, I did not worry to much about time and space complexity, and in my solution, recursion was not necessary. However, this project did prove quite challenging to me because, despite having practiced with binary search trees, this problem was harder to wrap my head around because it required the use of a graph, with some interesting ways of traversing it.
 
 The problem to solve is to build a program that, given both starting and end positions for a knight on a chess board, it needs to find the shortest path between the two, and output the steps involved. I was given a hint to treat all possible steps as children in a data structure. So, this was looking similar to my practice with binary search trees, except each node could have more than two children (8 possible moves maximum to be exact).
