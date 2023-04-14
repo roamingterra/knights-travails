@@ -120,7 +120,6 @@ function Node(position = null, parent = null) {
         const newNode = method();
         if (newNode !== null) currentNodeNames.push(newNode);
       }
-      console.log(currentNodeNames);
 
       // Create objects based on new nodes and store their references in newNodes array
       if (currentNodeNames.length !== 0) {
@@ -132,7 +131,6 @@ function Node(position = null, parent = null) {
           }
           newNodes.push(childNode);
         }
-        console.log(`Here it is: ${newNodes}`);
         return newNodes;
       } else return;
     },
@@ -162,11 +160,9 @@ function KnightMoves(startPosition, endPosition) {
     queue.push(root);
 
     while (queue.length > 0) {
-      console.log("this works");
       const currentNode = queue.shift();
       //   const currentNodeObject = Node(currentNode);
       if (currentNode.currentPosition() === endPosition) {
-        console.log("works");
         endPositionObject = currentNode;
         return endPositionObject;
       }
@@ -176,11 +172,37 @@ function KnightMoves(startPosition, endPosition) {
     }
   }
 
+  // TRACE SHORTEST PATH FUNCTION
+  function tracePath(endPositionObject) {
+    const path = [];
+    let numOfSteps;
+    let currentObject = endPositionObject;
+    path.unshift(currentObject.currentPosition());
+
+    // Trace back path from end node to root
+    while (currentObject.parent !== null) {
+      path.unshift(currentObject.parent.currentPosition());
+      currentObject = currentObject.parent;
+    }
+    numOfSteps = path.length - 1;
+
+    // Show user the path
+    console.log(`You made it in ${numOfSteps} moves! Here's your path:`);
+
+    for (let i = 0; i < path.length; i++) {
+      console.log(`${path[i]}`);
+    }
+  }
+
+  // Flow control
   const endPositionObject = Graph();
-  console.log(endPositionObject);
-  return endPositionObject;
+  tracePath(endPositionObject);
+  return;
 }
 
-const endPosition = KnightMoves("h1", "a8");
-console.log(endPosition.currentPosition());
-console.log(endPosition.parent.currentPosition());
+let startingPosition = "d4";
+let endPosition = "d5";
+
+console.log("\nKnight moves from d4 to d5.\n");
+
+KnightMoves(startingPosition, endPosition);
